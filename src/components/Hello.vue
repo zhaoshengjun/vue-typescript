@@ -2,15 +2,16 @@
   <div class="hello">
     <h1>{{ fullMessage }}</h1>
     <button @click="clicked">Click</button>
+    <button @click="parentClicked">Parent Click</button>
   </div>
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import Parent from './Parent';
 import Component from 'vue-class-component';
 
 @Component
-export default class Hello extends Vue {
+export default class Hello extends Parent {
   message: string = 'Hello Vue';
 
   get fullMessage() {

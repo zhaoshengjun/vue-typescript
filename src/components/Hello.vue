@@ -1,15 +1,31 @@
 <template>
   <div class="hello">
-    <h1>{{ message }}</h1>
+    <h1>{{ fullMessage }}</h1>
+    <button @click="clicked">Click</button>
   </div>
 </template>
 
 <script lang="ts">
 export default {
   name: 'hello',
-  data () {
+  data() {
     return {
-      message: 'Welcome to Your Vue.js App'
+      message: 'Hello Vue'
+    }
+  },
+  computed: {
+    fullMessage() {
+      return `${this.message} from TypeScript`
+    }
+  },
+
+  created() {
+    console.log('created!');
+  },
+
+  methods: {
+    clicked() {
+      console.log('clicked!');
     }
   }
 }
@@ -17,7 +33,8 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h1, h2 {
+h1,
+h2 {
   font-weight: normal;
 }
 

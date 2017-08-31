@@ -1,8 +1,7 @@
 <template>
   <div class="hello">
     <h1>{{ fullMessage }}</h1>
-    <button @click="clicked">Click</button>
-    <button @click="parentClicked">Parent Click</button>
+    <router-link to="hello-ts">HelloTS</router-link>
   </div>
 </template>
 
@@ -24,6 +23,11 @@ export default class Hello extends Parent {
 
   clicked() {
     console.log('clicked');
+  }
+
+  beforeRouteEnter(to, from, next) {
+    console.log('enter');
+    next();
   }
 }
 // export default {

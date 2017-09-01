@@ -1,26 +1,22 @@
 <template>
   <div id="app">
-    <button @click="sumUp">Count: {{count.acum}}</button>
+    <Users />
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import { Component, Watch } from 'vue-property-decorator';
+import { Component, Provide } from 'vue-property-decorator';
+import Users from './components/Users.vue';
+import axios from 'axios';
 
-@Component
+@Component({
+  components: {
+    Users
+  }
+})
 export default class App extends Vue {
-  count = {
-    acum: 0
-  };
-  @Watch('count.acum')
-  watchCount(newVal, oldVal) {
-    console.log('New :', newVal, ', Old: ', oldVal);
-  }
-
-  sumUp() {
-    this.count.acum++;
-  }
+  @Provide('myHttpModule') http = axios;
 }
 </script>
 

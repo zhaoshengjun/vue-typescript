@@ -6,20 +6,18 @@
 </template>
 
 <script lang="ts">
-import Parent from './Parent';
-import Component from 'vue-class-component';
-import colorDirective from '../color-directive';
+import Vue from 'vue';
+import { Component, Prop } from 'vue-property-decorator';
 
-@Component({
-  directives: {
-    colorDirective
-  }
-})
-export default class Hello extends Parent {
-  message: string = 'Hello Vue';
+@Component({})
+export default class Hello extends Vue {
+  message: string = 'Hello';
+
+  @Prop({ type: String, default: " Vue" })
+  msg: string;
 
   get fullMessage() {
-    return `${this.message} from TypeScript`
+    return `${this.message}${this.msg} from TypeScript`
   }
 
   created() {

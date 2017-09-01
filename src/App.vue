@@ -1,25 +1,25 @@
 <template>
   <div id="app">
-    <img src="./assets/logo.png">
-    <MyCheckbox :title="checkbox.title" :value="checkbox.value" v-model="checkbox.checked" />
+    <button @click="sumUp">Count: {{count.acum}}</button>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import { Component } from 'vue-property-decorator';
-import MyCheckbox from './components/MyCheckbox.vue';
+import { Component, Watch } from 'vue-property-decorator';
 
-@Component({
-  components: {
-    MyCheckbox
-  }
-})
+@Component
 export default class App extends Vue {
-  checkbox = {
-    title: 'Fancy checkbox',
-    value: 'checkbox-id',
-    checked: false
+  count = {
+    acum: 0
+  };
+  @Watch('count.acum')
+  watchCount(newVal, oldVal) {
+    console.log('New :', newVal, ', Old: ', oldVal);
+  }
+
+  sumUp() {
+    this.count.acum++;
   }
 }
 </script>

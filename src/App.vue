@@ -1,22 +1,35 @@
 <template>
   <div id="app">
-    <Users />
+    <h1>{{message}}</h1>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import { Component, Provide } from 'vue-property-decorator';
-import Users from './components/Users.vue';
-import axios from 'axios';
+import Component, { createDecorator } from "vue-class-component";
 
-@Component({
-  components: {
-    Users
-  }
+const Log = (msg?: string) => {
+  return createDecorator((component, key) => {
+    console.log('Comp', component);
+    console.log('key', key);
+    console.log(msg);
+  })
+}
+
+const NoCache = createDecorator((comp: any, key) => {
+  comp.computed[key].cache = false;
 })
+
+@Component
 export default class App extends Vue {
-  @Provide('myHttpModule') http = axios;
+  @Log()
+  name = 'paco';
+
+  @Log('test')
+  @NoCache
+  get message() {
+    return 'Hi, vue!'
+  }
 }
 </script>
 

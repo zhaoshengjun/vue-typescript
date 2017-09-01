@@ -1,36 +1,69 @@
 <template>
   <div id="app">
-    <h1>{{message}}</h1>
+    <p>{{userName}}</p>
+    <button @click="handler">Get User Name</button>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import Component, { createDecorator } from "vue-class-component";
+import { AdvicePool, onException, beforeMethod, adviceMetadata, IMetadata, afterMethod, adviceParam } from 'kaop-ts';
 
-const Log = (msg?: string) => {
-  return createDecorator((component, key) => {
-    console.log('Comp', component);
-    console.log('key', key);
-    console.log(msg);
-  })
+class Advice extends AdvicePool {
+  static getCached( @adviceMetadata metadata: IMetadata, @adviceParam(0) prop) {
+    console.log('getCache executed');
+    const key = `${metadata.scope.$options.name}_${metadata.propertyKey}`;
+    const cached = localStorage.getItem(key);
+    if (cached) {
+      metadata.scope[prop] = cached;
+      this.stop();
+    }
+  }
+
+  static setCache( @adviceMetadata metadata: IMetadata, @adviceParam(0) prop) {
+    console.log('setCache executed');
+    const key = `${metadata.scope.$options.name}_${metadata.propertyKey}`;
+    if (metadata.result) {
+      metadata.result.then(_ => {
+        localStorage.setItem(key, metadata.scope[prop]);
+      })
+    }
+  }
+  static notify( @adviceParam(0) toServer) {
+    if (toServer) {
+      console.log('Http call to server')
+    } else {
+      console.log('Notifying to client...');
+    }
+  }
+
+  static report( @adviceMetadata metadata: IMetadata) {
+    console.error('error...', metadata.exception)
+  }
 }
-
-const NoCache = createDecorator((comp: any, key) => {
-  comp.computed[key].cache = false;
-})
 
 @Component
 export default class App extends Vue {
-  @Log()
-  name = 'paco';
+  userName = '';
 
-  @Log('test')
-  @NoCache
-  get message() {
-    return 'Hi, vue!'
+  @beforeMethod(Advice.getCached, 'userName')
+  @onException(Advice.report)
+  @afterMethod(Advice.setCache, 'userName')
+  @afterMethod(Advice.notify, true)
+  handler() {
+    console.log('method executed');
+    return fetch('https://jsonplaceholder.typicode.com/users/1')
+      .then(res => res.json())
+      .then(user => {
+        this.userName = user.name;
+      })
+      .catch(err => {
+        throw Error("terrible error");
+      })
   }
 }
+
 </script>
 
 <style>
